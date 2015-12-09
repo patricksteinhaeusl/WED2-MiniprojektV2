@@ -1,0 +1,27 @@
+<nav class="nav-links">/ <a class="nav-item" href="/#/list">Event List</a> / <a class="nav-item" href="/#/events/{{ eventId }}">Event Detail</a> / <a class="nav-item">Guest Add</a> /</nav>
+
+<h2>Guest Add</h2>
+<div class="wrapper-events">
+    <div class="event">
+        <form>
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" type="text" ng-model="guest.name" required />
+            </div>
+
+            <div class="form-group">
+                <label>Contribution</label>
+                <input class="form-control" type="text" ng-model="guest.contribution" required />
+            </div>
+
+            <div class="form-group">
+                <label>Comment</label>
+                <input class="form-control" type="text" ng-model="guest.comment" required />
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="submit" ng-click="add(guest)" value="Save" />
+            </div>
+        </form>
+    </div>
+</div>

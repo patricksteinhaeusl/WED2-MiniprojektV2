@@ -1,0 +1,11 @@
+<nav class="nav-links">/ <a class="nav-item">Event List</a> /</nav>
+<nav class="nav-actions"><a class="btn btn-primary glyphicon glyphicon-plus" href="/#/events/add"></a></nav>
+
+<h2>Events List</h2>
+<div class="wrapper-events">
+    <div class="event" ng-repeat="event in events" ng-click="redirectEventDetail(event)">
+        <h3>{{event.name}}</h3>
+        <p>{{event.times.begin | date:"dd.MM.yy HH:mm"}} - {{event.times.end | date:"dd.MM.yy HH:mm"}}</p>
+        <p>{{event.location.name}}, {{event.location.street}}, {{event.location.plz}} {{event.location.city}}</p>
+    </div>
+</div>

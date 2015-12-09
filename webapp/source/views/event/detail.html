@@ -1,0 +1,58 @@
+<nav class="nav-links">/ <a class="nav-item" href="/#/list">Event List</a> / <a class="nav-item">Event Detail</a> /</nav>
+<nav class="nav-actions">
+    <a class="btn btn-primary glyphicon glyphicon-edit" href="/#/events/{{ event.id }}/edit"></a>
+    <a ng-show="(event.guests | filter: canceled == true).length < event.maximalAmountOfGuests" class="btn btn-primary glyphicon glyphicon-user" href="/#/events/{{ event.id }}/guests/add"></a>
+</nav>
+
+<h2>Event Detail</h2>
+<div class="wrapper-events">
+    <div class="event">
+        <h3>{{event.name}}</h3>
+        <p ng-if="event.description">{{event.description}}</p>
+
+        <h4 ng-if="event.targetGroup">Target group</h4>
+        <p ng-if="event.targetGroup">{{event.targetGroup}}</p>
+
+        <h4 ng-if="event.contributionsDescription">Event contribution description</h4>
+        <p ng-if="event.contributionsDescription">{{event.contributionsDescription}}</p>
+
+        <h4>Location</h4>
+        <p>
+            {{event.location.name}}<br />
+            {{event.location.street}}<br />
+            {{event.location.plz}} {{event.location.city}}
+        </p>
+
+        <h4>Date &amp; time</h4>
+        <p>{{event.times.begin | date:"dd.MM.yy HH:mm"}} - {{event.times.end | date:"dd.MM.yy HH:mm"}}</p>
+
+        <h4>Guests</h4>
+        <p ng-if="event.maximalAmountOfGuests">
+            <i>Maximal amount of guests:</i>
+            {{event.maximalAmountOfGuests}}
+        </p>
+        <p ng-if="event.guests && event.guests.length > 0">
+            <i>Amount of guests:</i>
+            {{ (event.guests | filter: canceled == true).length }}
+        </p>
+
+        <div class="wrapper-guests" ng-repeat="guest in event.guests">
+            <div class="guest">
+                <nav class="nav-actions">
+                    <a class="btn btn-primary glyphicon glyphicon-edit" ng-show="guest.canceled == false" href="/#/events/{{ event.id }}/guests/{{ guest.id }}"></a>
+                </nav>
+                <div class="row">
+                    <div class="wrapper-guest-image col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <img class="guest-image" src="./resources/images/guest-image.png" />
+                    </div>
+                    <div class="wrapper-guest-content col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                        <p><i>Name:</i> {{ guest.name }}</p>
+                        <p><i>Contribution:</i> {{ guest.contribution }}</p>
+                        <p><i>Comment:</i> {{ guest.comment }}</p>
+                        <p><i>Canceled:</i> <input type="checkbox" ng-model="guest.canceled" disabled /></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
