@@ -152,12 +152,12 @@ app.post('/api/events', function(request, response) {
 });
 
 app.get('/api/events/:id', function(request, response) {
-	var event = findEvent(request.params.id);
-	if (event) {
-		response.json(event);
-	} else {
-		response.status(404).send('Event (id '+request.params.id+') not found.')
-	}
+  var event = findEvent(request.params.id);
+  if (event) {
+    response.json(event);
+  } else {
+    response.status(404).send('Event (id '+request.params.id+') not found.')
+  }
 });
 
 app.post('/api/events/:id', function(request, response) {
@@ -255,6 +255,9 @@ app.post('/api/events/:eventId/guests/:guestId', function(request, response) {
 	}
 });
 
+app.get('/guests', function(request, response) {
+  response.send(events);
+});
 
 /**
  * Server start

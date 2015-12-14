@@ -1,25 +1,11 @@
-define(['frameworks/angular', 'app/controllers/event/listController', 'app/controllers/event/detailController', 'app/controllers/event/addController', 'app/controllers/event/editController', 'app/controllers/guest/addController', 'app/controllers/guest/editController', 'app/repository/eventRepository', 'app/repository/guestRepository', 'libraries/angularRoute'],
-	function (Angular, EventListController, EventDetailController, AddEventController, EditEventController, AddGuestController, EditGuestController, EventRepository, GuestRepository) {
+define(['frameworks/angular', 'app/configuration', 'app/controllers/event/listController', 'app/controllers/event/detailController', 'app/controllers/event/addController', 'app/controllers/event/editController', 'app/controllers/guest/addController', 'app/controllers/guest/editController', 'app/repository/eventRepository', 'app/repository/guestRepository', 'libraries/angularRoute'],
+	function (Angular, Configuration, EventListController, EventDetailController, AddEventController, EditEventController, AddGuestController, EditGuestController, EventRepository, GuestRepository) {
 	'use strict';
 
 	/* modules */
 	var Lafete = Angular.module('lafete',['ngRoute']);
 
-	Lafete.value('Configuration', {
-		urls: {
-      events: {
-        all: '/api/events',
-        byId: '/api/events/{eventId}',
-        add: '/api/events',
-        edit: '/api/events/{eventId}'
-      },
-      guests: {
-        byId: '/api/events/{eventId}/guests/{guestId}',
-        add: '/api/events/{eventId}/guests',
-        edit: '/api/events/{eventId}/guests/{guestId}'
-      }
-		}
-	});
+  Lafete.value('Configuration', Configuration);
 
 	/* services */
 	EventRepository.$inject = ['$http', 'Configuration'];

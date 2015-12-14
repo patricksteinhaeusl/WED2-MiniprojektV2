@@ -19,7 +19,7 @@ define(['app/controllers/event/listController', 'frameworks/angular', 'libraries
 	describe('EventListController', function() {
 		describe('property scope', function() {
 			it('contains 3 events', function() {
-				var eventListController = new EventListController(scope, eventRepository);
+				var eventListController = new EventListController(scope, location, eventRepository);
 				expect(3).toBe(eventListController.scope.events.length);
 			});
 		});

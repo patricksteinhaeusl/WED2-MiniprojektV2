@@ -1,5 +1,5 @@
-define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/eventRepository', 'libraries/angularMocks'],
-	function (EventFactory, Event, EventRepository, AngularMocks) {
+define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/eventRepository', 'libraries/angularMocks', 'app/configuration'],
+	function (EventFactory, Event, EventRepository, AngularMocks, Configuration) {
 	'use strict';
 
 	describe('EventRepository', function() {
@@ -10,12 +10,25 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
 			$http = $injector.get('$http');
 			$httpBackend = $injector.get('$httpBackend');
 
-			eventRepository = new EventRepository($http);
+			eventRepository = new EventRepository($http, Configuration);
 			event = EventFactory.createEvent();
 
-			$httpBackend.when('GET', eventRepository.urls.all).respond({
-				events: [{id: 1, name: 'Party'},{id: 2, name: 'Concert'}]
-			});
+      $httpBackend.when('GET', '/api/events').respond({
+        events: [{id: 1, name: 'Party'},{id: 2, name: 'Concert'}]
+      });
+
+      $httpBackend.when('GET', '/api/events/1').respond({
+        id: 1, name: 'Party'
+      });
+
+      $httpBackend.when('POST', '/api/events').respond({
+        id: 1, name: 'Party'
+      });
+
+      $httpBackend.when('POST', '/api/events/1').respond({
+        id: 1, name: 'HSR Party'
+      });
+
 		}));
 
 		afterEach(function() {
@@ -23,81 +36,116 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
 			$httpBackend.verifyNoOutstandingRequest();
 		});
 
-		describe('get()', function() {
-			beforeEach(function() {
-				eventRepository.add(event);
-			});
+    describe('all()', function() {
+      it('returns an Array', function () {
+        $httpBackend.expectGET('/api/events');
+        var events = null;
+        eventRepository.all(function (eventList) {
+          events = eventList;
+        }, function () {
+        });
+        $httpBackend.flush();
+        expect(events).toEqual(jasmine.any(Array));
+      });
 
-			describe('by object id', function() {
-				it('returns the object', function() {
-					expect(eventRepository.get(event.id)).toEqual(event);
-				});
-			});
+      it('returns two events', function() {
+        $httpBackend.expectGET('/api/events');
+        var events = null;
+        eventRepository.all(function(eventList) {
+          events = eventList;
+        },function () {});
+        $httpBackend.flush();
+        expect(events.length).toEqual(2);
+      });
 
-			describe('by inexistent object id', function() {
-				it('returns null', function() {
-					expect(eventRepository.get(null)).toEqual(null);
-					expect(eventRepository.get('abvhf74n6')).toEqual(null);
-				});
-			});
-		});
+      it('returns real javascript objects', function() {
+        $httpBackend.expectGET('/api/events');
+        var events = null;
+        eventRepository.all(function(eventList) {
+          events = eventList;
+        }, function(){});
+        $httpBackend.flush();
+        expect(events[0]).toEqual(jasmine.any(Event));
+        expect(events[1]).toEqual(jasmine.any(Event));
+      });
+    });
 
-		describe('all()', function() {
-			it('returns an Array', function() {
-				$httpBackend.expectGET(eventRepository.urls.all);
-				var events = null;
-				eventRepository.all(function(eventList) {
-					events = eventList;
-				});
-				$httpBackend.flush();
-				expect(events).toEqual(jasmine.any(Array));
-			});
+    describe('add()', function() {
+      it('inserts event', function() {
+        var status = false;
+        eventRepository.add(event, function () {status = true}, function(){});
 
-			it('returns two events', function() {
-				$httpBackend.expectGET(eventRepository.urls.all);
-				var events = null;
-				eventRepository.all(function(eventList) {
-					events = eventList;
-				});
-				$httpBackend.flush();
-				expect(events.length).toEqual(2);
-			});
+        $httpBackend.flush();
 
-			it('returns real javascript objects', function() {
-					$httpBackend.expectGET(eventRepository.urls.all);
-					var events = null;
-					eventRepository.all(function(eventList) {
-						events = eventList;
-					});
-					$httpBackend.flush();
-					expect(events[0]).toEqual(jasmine.any(Event));
-					expect(events[1]).toEqual(jasmine.any(Event));
-			});
-		});
+        expect(status).toBe(true);
+      });
 
-		describe('add()', function() {
-			it('inserts element', function() {
-				var status1 = eventRepository.add(event);
-				expect(status1).toBe(true);
-			});
+      it('inserts an other event', function() {
+        var status = false;
+        eventRepository.add(event, function () {status = true}, function(){});
 
-			describe('same element again', function() {
-				var size, status2;
+        $httpBackend.flush();
 
-				beforeEach(function() {
-					eventRepository.add(event);
+        expect(status).toBe(true);
+      });
 
-					size = eventRepository.events.length;
-					status2 = eventRepository.add(event);
-				});
+      it('inserts an other event', function() {
+        var status = false;
+        eventRepository.add(event, function () {status = true}, function(){});
 
-				it('doesn\'t affect repository size', function() {
-					expect(eventRepository.events.length).toBe(size);
-				});
-				it('returns false', function() {
-					expect(status2).toBe(false);
-				});
-			});
-		});
-	});
+        $httpBackend.flush();
+
+        expect(status).toBe(true);
+      });
+    });
+
+    describe('get()', function() {
+      describe('by existing object id', function() {
+        it('returns event', function() {
+          var returnedEvent;
+          var event = { id: 1 };
+
+          eventRepository.get(event,function(e){
+            returnedEvent = e;
+          }, function(){});
+
+          $httpBackend.flush();
+
+          expect(returnedEvent).toEqual(jasmine.any(Event));
+          expect(returnedEvent.id).toEqual(event.id);
+        });
+
+        describe('by inexistent object id', function() {
+          it('returns null', function() {
+            expect(eventRepository.get(null, function () {}, function(){})).toEqual(null);
+          });
+
+          it('returns null', function() {
+            expect(eventRepository.get(undefined, function () {}, function(){})).toEqual(null);
+          });
+        });
+      });
+    });
+
+    describe('update()', function() {
+      it('updates event', function() {
+        var returnedEvent;
+        var event = { id: 1 };
+
+        eventRepository.get(event,function(e){
+          event = e;
+        }, function(){});
+
+        $httpBackend.flush();
+        event.name = "HSR Party";
+
+        eventRepository.edit(event, function(e){
+          returnedEvent = e;
+        }, function(){});
+
+        $httpBackend.flush();
+        expect(returnedEvent).toEqual(event);
+      });
+    });
+  });
 });

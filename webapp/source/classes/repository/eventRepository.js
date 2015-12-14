@@ -25,11 +25,15 @@ define(['app/model/event'], function(Event) {
 		 * @param string identifier
 		 */
 		this.get = function(event, successCallback, errorCallback) {
-			$http.get(Configuration.urls.events.byId.replace('{eventId}', event.id))
-				.success(function(eventDTO) {
-					successCallback(Event.createFromDTO(eventDTO));
-				})
-				.error(errorCallback);
+      if(event) {
+        $http.get(Configuration.urls.events.byId.replace('{eventId}', event.id))
+          .success(function(eventDTO) {
+              successCallback(Event.createFromDTO(eventDTO));
+          })
+          .error(errorCallback);
+      } else {
+        return null;
+      }
 		};
 
 		/**
