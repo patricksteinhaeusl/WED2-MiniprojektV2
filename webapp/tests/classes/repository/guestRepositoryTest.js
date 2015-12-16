@@ -61,36 +61,6 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
 
         expect(status).toBe(true);
       });
-
-      it('inserts an other guest', function() {
-        var status = false;
-        var returnedEvent;
-        eventRepository.add(event, function (e) {returnedEvent = e; status = true}, function(){});
-
-        $httpBackend.flush();
-
-        var status = false;
-        guestRepository.add(returnedEvent, guest, function () {status = true}, function(){});
-
-        $httpBackend.flush();
-
-        expect(status).toBe(true);
-      });
-
-      it('inserts an other guest', function() {
-        var status = false;
-        var returnedEvent;
-        eventRepository.add(event, function (e) {returnedEvent = e; status = true}, function(){});
-
-        $httpBackend.flush();
-
-        var status = false;
-        guestRepository.add(returnedEvent, guest, function () {status = true}, function(){});
-
-        $httpBackend.flush();
-
-        expect(status).toBe(true);
-      });
     });
   });
 });

@@ -22,7 +22,7 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
       });
 
       $httpBackend.when('POST', '/api/events').respond({
-        id: 1, name: 'Party'
+        id: 1, name: 'Simons birthday'
       });
 
       $httpBackend.when('POST', '/api/events/1').respond({
@@ -72,30 +72,15 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
 
     describe('add()', function() {
       it('inserts event', function() {
+        var returnedEvent;
+
         var status = false;
-        eventRepository.add(event, function () {status = true}, function(){});
+
+        eventRepository.add(event, function (e) {returnedEvent = e; status = true}, function(){});
 
         $httpBackend.flush();
-
         expect(status).toBe(true);
-      });
-
-      it('inserts an other event', function() {
-        var status = false;
-        eventRepository.add(event, function () {status = true}, function(){});
-
-        $httpBackend.flush();
-
-        expect(status).toBe(true);
-      });
-
-      it('inserts an other event', function() {
-        var status = false;
-        eventRepository.add(event, function () {status = true}, function(){});
-
-        $httpBackend.flush();
-
-        expect(status).toBe(true);
+        expect(returnedEvent.name).toEqual(event.name);
       });
     });
 
@@ -130,21 +115,15 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
     describe('update()', function() {
       it('updates event', function() {
         var returnedEvent;
-        var event = { id: 1 };
-
-        eventRepository.get(event,function(e){
-          event = e;
-        }, function(){});
-
-        $httpBackend.flush();
-        event.name = "HSR Party";
+        var event = new Event();
+        event.id = 1;
 
         eventRepository.edit(event, function(e){
           returnedEvent = e;
         }, function(){});
 
         $httpBackend.flush();
-        expect(returnedEvent).toEqual(event);
+        expect(returnedEvent.id).toEqual(event.id);
       });
     });
   });
