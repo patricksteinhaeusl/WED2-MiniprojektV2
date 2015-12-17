@@ -75,11 +75,13 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
         var returnedEvent;
 
         var status = false;
+        $httpBackend.expectPOST('/api/events', event);
 
         eventRepository.add(event, function (e) {returnedEvent = e; status = true}, function(){});
 
         $httpBackend.flush();
         expect(status).toBe(true);
+        expect(returnedEvent).toEqual(jasmine.any(Event));
         expect(returnedEvent.name).toEqual(event.name);
       });
     });
@@ -117,6 +119,8 @@ define(['tests/factories/eventFactory', 'app/model/event', 'app/repository/event
         var returnedEvent;
         var event = new Event();
         event.id = 1;
+
+        $httpBackend.expectPOST('/api/events/1', event);
 
         eventRepository.edit(event, function(e){
           returnedEvent = e;
